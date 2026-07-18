@@ -1,0 +1,14 @@
+# ================================
+# Configuracion de ArlightCore
+# ================================
+
+xp:
+  xp-per-win: 5          # XP que se da al ganar cualquier minijuego registrado
+  xp-per-level: 30       # cuanta XP hace falta para subir un nivel
+
+# Mundos donde se PUEDE reclamar una recompensa (para que no se pierda muriendo en un minijuego).
+claim-worlds:
+  - "survival"
+
+# Items entregados automaticamente a cada jugador al entrar al servidor (si no los tiene).
+give-items-on-join: true
