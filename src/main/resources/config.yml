@@ -156,3 +156,7 @@ universal-podium:
   default-display-ticks: 240
   allow-requeue: true
   hide-hud: true
+
+# Persistencia segura de inventarios y sesiones de minijuegos.
+sessions:
+  journal-max-entries: 200
