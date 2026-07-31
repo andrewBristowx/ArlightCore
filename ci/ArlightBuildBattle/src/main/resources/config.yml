@@ -1,0 +1,22 @@
+world:
+  name: vacio
+game:
+  minimum-players: 2
+  maximum-players: 12
+  auto-start-seconds: 20
+phases:
+  proposal-seconds: 20
+  theme-voting-seconds: 20
+  building-seconds: 480
+  voting-seconds-per-plot: 10
+plots:
+  origin: {x: 0, y: 80, z: 0}
+  size: 32
+  gap: 12
+  max-height: 48
+themes:
+  maximum-length: 32
+  blocked-words: []
+
+waiting-screen:
+  enabled: true
