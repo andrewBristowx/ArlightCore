@@ -1,0 +1,10 @@
+name: ArlightBuildBattle
+version: 1.2.1
+main: com.arlight.buildbattle.ArlightBuildBattlePlugin
+api-version: '1.21'
+depend: [ArlightCore]
+commands:
+  buildbattle:
+    aliases: [bb]
+permissions:
+  arlightbuildbattle.admin: {default: op}

@@ -1,0 +1,8 @@
+ArlightBuildBattle 1.2.1 - IMMUTABLE PLOT VOTING
+
+- Conserva una lista inmutable de dueños y parcelas desde que comienza la construcción.
+- Una desconexión ya no desplaza los índices ni asigna votos a otra parcela.
+- Los votos se guardan contra el índice real de la parcela visitada.
+- Las construcciones siguen siendo evaluables aunque su dueño se desconecte.
+- El podio usa el snapshot original de participantes de la ronda.
+- Actualiza la dependencia de ArlightCore de 1.18.0 a 1.20.0.
