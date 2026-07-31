@@ -1,0 +1,45 @@
+name: Compilar ArlightBuildBattle 1.2.1
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - 'agent/buildbattle-1.2.1-ci'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Validar versiones
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '<version>1.20.0</version>' pom.xml
+          grep -q '<version>1.2.1</version>' ci/ArlightBuildBattle/pom.xml
+          grep -q 'version: 1.2.1' ci/ArlightBuildBattle/src/main/resources/plugin.yml
+      - name: Instalar ArlightCore 1.20.0
+        run: mvn -B -DskipTests clean install
+      - name: Compilar Build Battle 1.2.1
+        run: mvn -B -f ci/ArlightBuildBattle/pom.xml clean package
+      - name: Reunir JAR
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp ci/ArlightBuildBattle/target/ArlightBuildBattle-1.2.1.jar dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArlightBuildBattle-1.2.1-JAR
+          path: dist/ArlightBuildBattle-1.2.1.jar
+          if-no-files-found: error
