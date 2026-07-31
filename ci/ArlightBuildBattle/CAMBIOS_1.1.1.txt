@@ -1,0 +1,5 @@
+ArlightBuildBattle 1.1.1 COMPILE-FIX
+
+- Corrige dos errores de compilación en ArlightBuildBattlePlugin.java, método plotCenter.
+- Sustituye gap por gap() en las coordenadas X y Z de las parcelas.
+- No cambia la mecánica ni el protocolo visual de ArlightChatClient 2.8.0.

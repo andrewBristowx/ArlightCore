@@ -1,0 +1,7 @@
+ARLIGHTBUILDBATTLE 1.1.0 - VISUAL QUEUE UI
+
+- Añade el canal arlightbuildbattle:waiting.
+- Envía a ArlightChatClient 2.8.0 jugadores, capacidad, estado y cuenta regresiva.
+- La pantalla se actualiza cuando alguien entra o sale y una vez por segundo.
+- Se oculta automáticamente al comenzar la partida.
+- waiting-screen.enabled permite desactivar la interfaz del cliente.

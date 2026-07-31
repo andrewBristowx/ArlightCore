@@ -1,0 +1,8 @@
+Pruebas requeridas para ArlightBuildBattle 1.3.0
+
+1. Iniciar con dos o más jugadores y verificar que cada parcela se crea normalmente.
+2. Colocar y romper bloques, usar agua y lava, encender fuego y generar bloques con gravedad.
+3. Hacer que un jugador abandone durante construcción y otro durante votación.
+4. Terminar la partida y comprobar que toda la región vuelve exactamente a su estado anterior.
+5. Confirmar que no quedan entidades y que los inventarios siguen aislados en el grupo buildbattle.
+6. Reiniciar el servidor antes de promover esta candidata sobre 1.2.1.
