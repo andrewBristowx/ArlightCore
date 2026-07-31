@@ -1,0 +1,13 @@
+PRUEBAS — ArlightCore 1.22.0
+
+1. Arranca con Core 1.22.0 y ejecuta /core doctor.
+2. Verifica que Transacciones de mundos muestre pendientes=0.
+3. Crea una copia de prueba con level.dat bajo un nombre temporal.
+4. Saca a todos los jugadores del mundo activo y llama a la API replaceArenaWorld.
+5. Confirma que el mundo nuevo carga y que plugins/ArlightCore/world-backups conserva el anterior.
+6. Simula un apagado después de BACKED_UP y confirma la recuperación al arrancar.
+7. Simula un apagado después de SWITCHED y confirma carga o rollback.
+8. Comprueba que rechaza ../, enlaces simbólicos, carpetas sin level.dat y mundos con jugadores.
+9. Ejecuta /core worldtx list y /core worldtx recover.
+
+No pruebes primero sobre Survival, Recursos, Nether o End. Usa una arena desechable.
