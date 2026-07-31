@@ -1,14 +1,15 @@
 name: ArlightCore
-version: '1.0.0'
+version: '1.20.0'
 main: com.arlight.core.ArlightCorePlugin
 api-version: '1.21'
 author: Arlight
-description: Nucleo compartido para los minijuegos del servidor Arlight (items de menu, XP/niveles, recompensas)
+description: Nucleo compartido para minijuegos, minipase, perfiles, estadísticas y sesiones
+softdepend: [PlaceholderAPI, ArlightChat, Multiverse-Core, Multiverse-Inventories, Multiverse-NetherPortals]
 
 commands:
   core:
     description: Comando principal de ArlightCore
-    usage: /core <items|rewards|reward|reload>
+    usage: /core <items|reward|xp|stats|status|debug|recover|setlobby|lobby|queue|games|minigames|leaderboard|hologram|multiverse|reload>
     permission: arlightcore.use
 
 permissions:
@@ -16,5 +17,8 @@ permissions:
     description: Permite usar el comando /core
     default: true
   arlightcore.admin:
-    description: Permite administrar recompensas y XP
+    description: Permite administrar recompensas, XP, clasificaciones y hologramas
+    default: op
+  arlightcore.lobby.build:
+    description: Permite construir manualmente dentro del lobby protegido
     default: op

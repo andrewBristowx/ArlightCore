@@ -1,0 +1,11 @@
+ARLIGHTCORE 1.15.0 - INTEGRACION MULTIVERSE
+
+- Sincroniza grupos estáticos con Multiverse-Inventories.
+- Expone una API para que Bingo registre arenas rotativas dinámicamente.
+- Enlaza Overworld/Nether/End con Multiverse-NetherPortals mediante comandos públicos.
+- Crea una copia de seguridad de groups.yml antes de modificar grupos.
+- Evita que Core restaure manualmente inventarios cuando MVI administra los perfiles.
+- Recupera jugadores desconectados teletransportándolos primero al grupo del lobby.
+- Nuevo comando: /core multiverse <status|sync>.
+
+- Los grupos estáticos no se alteran al arrancar por seguridad; usa /core multiverse sync después de revisar nombres.

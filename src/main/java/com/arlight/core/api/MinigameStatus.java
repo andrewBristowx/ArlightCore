@@ -1,6 +1,13 @@
 package com.arlight.core.api;
 
 public enum MinigameStatus {
-    WAITING,     // se puede unir
-    IN_PROGRESS  // partida en curso, no se puede unir
+    AVAILABLE,   // disponible, equivalente a WAITING para integraciones nuevas
+    WAITING,     // esperando jugadores; se puede unir
+    IN_PROGRESS, // partida en curso
+    RESTARTING,  // limpiando o regenerando arena
+    DISABLED;    // desactivado o en mantenimiento
+
+    public boolean canJoin() {
+        return this == AVAILABLE || this == WAITING;
+    }
 }

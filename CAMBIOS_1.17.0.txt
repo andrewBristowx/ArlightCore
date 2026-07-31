@@ -1,0 +1,5 @@
+ArlightCore 1.17.0
+- Recompensa XP predeterminada para luckyblockislands: 15.
+- Grupo Multiverse predeterminado luckyblockislands/lucky_islands.
+- LuckyBlock Islands se registra dinámicamente mediante ArlightCoreAPI.
+- No cambia la API de scoreboards ni colas usada por Bingo y SkyWars.

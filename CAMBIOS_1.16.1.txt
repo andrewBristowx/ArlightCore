@@ -1,0 +1,6 @@
+ArlightCore 1.16.1 - Scoreboard ownership fix
+
+- El scoreboard del lobby deja de enviar CLEAR cada segundo a jugadores dentro de Bingo/SkyWars.
+- El lobby libera su panel inmediatamente al iniciar una sesión de minijuego.
+- Se registran los propietarios del panel visual para no borrar paneles de otros plugins.
+- Se deduplican payloads visuales idénticos para reducir paquetes y parpadeos.

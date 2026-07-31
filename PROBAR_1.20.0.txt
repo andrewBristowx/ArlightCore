@@ -1,0 +1,10 @@
+PRUEBA ARLIGHTCORE 1.20.0
+
+1. Compila con Java 21: mvn clean install.
+2. Instala ArlightCore-1.20.0.jar y reinicia; no uses /reload.
+3. Ejecuta /core multiverse status.
+4. Prepara una arena Bingo ya existente e inicia una partida.
+5. En consola no deben repetirse tres veces mensajes "Starting import" ni "already exists".
+6. El grupo bingo debe contener exactamente overworld, nether y end una sola vez.
+7. Repite el inicio: la segunda llamada debe omitirse por idempotencia.
+8. Verifica que survival, lobby y buildbattle no cambien de grupo.

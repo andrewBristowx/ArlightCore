@@ -1,0 +1,5 @@
+ArlightCore 1.18.0 - UNIVERSAL PODIUM
+- API común de podio individual para todos los minijuegos.
+- Canal arlightcore:podium compatible con ArlightChatClient 2.9.0.
+- Puestos 1, 2 y 3, estadísticas por juego, tema y comando de revancha.
+- Método compartido para volver al lobby legos.

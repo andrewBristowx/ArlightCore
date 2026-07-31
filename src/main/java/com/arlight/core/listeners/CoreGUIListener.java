@@ -5,6 +5,7 @@ import com.arlight.core.api.MinigameProvider;
 import com.arlight.core.api.MinigameStatus;
 import com.arlight.core.gui.RewardsGUI;
 import com.arlight.core.gui.SelectorGUI;
+import com.arlight.core.gui.ProfileGUI;
 import com.arlight.core.reward.RewardManager;
 import com.arlight.core.xp.PlayerLevelManager;
 import org.bukkit.ChatColor;
@@ -16,6 +17,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
 
 public class CoreGUIListener implements Listener {
 
@@ -28,7 +31,8 @@ public class CoreGUIListener implements Listener {
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         String title = event.getView().getTitle();
-        if (title.equals(SelectorGUI.TITLE) || title.equals(RewardsGUI.TITLE)) {
+        if (SelectorGUI.isTitle(title) || title.equals(RewardsGUI.TITLE)
+                || title.equals(ProfileGUI.TITLE)) {
             event.setCancelled(true);
         }
     }
@@ -37,7 +41,7 @@ public class CoreGUIListener implements Listener {
     public void onClick(InventoryClickEvent event) {
         String title = event.getView().getTitle();
 
-        if (title.equals(SelectorGUI.TITLE)) {
+        if (SelectorGUI.isTitle(title)) {
             event.setCancelled(true);
             handleSelectorClick(event);
             return;
@@ -46,6 +50,11 @@ public class CoreGUIListener implements Listener {
         if (title.equals(RewardsGUI.TITLE)) {
             event.setCancelled(true);
             handleRewardsClick(event);
+            return;
+        }
+
+        if (title.equals(ProfileGUI.TITLE)) {
+            event.setCancelled(true);
         }
     }
 
@@ -60,12 +69,17 @@ public class CoreGUIListener implements Listener {
         MinigameProvider provider = plugin.getMinigameRegistry().get(providerId);
         if (provider == null) return;
 
-        if (provider.getStatus() != MinigameStatus.WAITING) {
+        if (!plugin.isMinigameEnabled(providerId)) {
+            player.sendMessage(ChatColor.RED + "Ese minijuego está deshabilitado temporalmente.");
+            return;
+        }
+
+        if (!provider.getStatus().canJoin()) {
             player.sendMessage(ChatColor.RED + "Esa partida ya esta en curso, esperá a que termine.");
             return;
         }
         player.closeInventory();
-        provider.join(player);
+        plugin.getQueueManager().join(player, provider);
     }
 
     private void handleRewardsClick(InventoryClickEvent event) {
@@ -93,13 +107,19 @@ public class CoreGUIListener implements Listener {
         }
 
         Collection<String> claimWorlds = plugin.getClaimWorlds();
-        if (!claimWorlds.contains(player.getWorld().getName())) {
+        String currentWorld = player.getWorld().getName().toLowerCase(Locale.ROOT);
+        boolean allowedWorld = claimWorlds.stream()
+                .filter(java.util.Objects::nonNull)
+                .map(name -> name.toLowerCase(Locale.ROOT))
+                .anyMatch(currentWorld::equals);
+        if (!allowedWorld) {
             player.sendMessage(ChatColor.RED + "Solo podes reclamar recompensas en: " + String.join(", ", claimWorlds));
             return;
         }
 
         ItemStack reward = rewardManager.getReward(level);
-        player.getInventory().addItem(reward);
+        Map<Integer, ItemStack> leftovers = player.getInventory().addItem(reward);
+        leftovers.values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
         levelManager.markClaimed(player.getUniqueId(), level);
         player.sendMessage(ChatColor.GREEN + "Reclamaste la recompensa del nivel " + level + "!");
         player.openInventory(RewardsGUI.build(plugin, player, levelManager, rewardManager));

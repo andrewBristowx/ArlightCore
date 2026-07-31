@@ -1,0 +1,9 @@
+VALIDACIÓN ARLIGHTCORE 1.20.0
+
+- pom.xml y plugin.yml válidos y sincronizados en 1.20.0.
+- 32 archivos Java con llaves/paréntesis balanceados.
+- javac 21 no detectó errores de sintaxis; el build completo requiere Paper/PAPI.
+- API configureMinigameWorldsStable presente.
+- Lectura compatible de worlds.yml raíz y sección worlds:.
+- Cachés de importación, enlaces y configuración en vuelo presentes.
+- No se modificaron grupos estáticos del usuario ni datos de lobby.

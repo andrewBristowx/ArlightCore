@@ -2,9 +2,26 @@
 # Configuracion de ArlightCore
 # ================================
 
+# MySQL/MariaDB (opcional). Si falla la conexión se usan los YAML locales.
+# Nunca publiques la contraseña ni subas este config.yml a un repositorio público.
+database:
+  enabled: false
+  host: "127.0.0.1"
+  port: 3306
+  name: "arlightcore"
+  username: ""
+  password: ""
+  use-ssl: false
+  pool-size: 4
+
 xp:
   xp-per-win: 5          # XP que se da al ganar cualquier minijuego registrado
   xp-per-level: 30       # cuanta XP hace falta para subir un nivel
+  # Recompensa específica por juego. Si un ID no aparece aquí, usa xp-per-win.
+  per-minigame:
+    skywars: 10
+    bingo: 20
+    luckyblockislands: 15
 
 # Mundos donde se PUEDE reclamar una recompensa (para que no se pierda muriendo en un minijuego).
 claim-worlds:
@@ -12,3 +29,130 @@ claim-worlds:
 
 # Items entregados automaticamente a cada jugador al entrar al servidor (si no los tiene).
 give-items-on-join: true
+
+# Botones permanentes de la barra rápida dentro del lobby `legos`.
+lobby-items:
+  cosmetics:
+    # Solo se entrega cuando ArlightCosmetics está instalado y activo.
+    enabled: true
+    # Evita 0, 4 y 8, usados por Minijuegos, Recompensas y Perfil.
+    slot: 6
+    material: AMETHYST_SHARD
+
+# Control central de acceso a minijuegos. Desactivar no expulsa partidas activas;
+# solamente impide nuevas entradas hasta volver a habilitarlas.
+minigames:
+  enabled: true
+  disabled: []
+
+# Añade los iconos del resource pack ArlightChat 1.4.0 a interfaces y mensajes.
+# Se puede desactivar sin eliminar ni cambiar el resto de la configuración.
+decorations:
+  enabled: true
+
+# Sidebar mostrado solamente en el lobby general y fuera de una sesión de minijuego.
+lobby-scoreboard:
+  enabled: true
+  update-interval-ticks: 20
+  # Los alias de ArlightChat, como :ponicalva:, se convierten en emotes automáticamente.
+  title: "&d&lMinijuegos :ponicalva:"
+  footer: "&eGracias &6holy.gg"
+
+# Mundo al que regresan los jugadores descalificados por desconectarse o por
+# una partida interrumpida durante un reinicio del servidor.
+lobby-world: "legos"
+
+lobby:
+  # Desactivado: conectarse al servidor NO te envía automáticamente al lobby de minijuegos.
+  # Se puede entrar voluntariamente con /core lobby o mediante otro portal/plugin.
+  teleport-on-join: false
+  # Los jugadores normales no pueden construir. Los operadores y quienes tengan
+  # arlightcore.lobby.build sí pueden; WorldEdit y otros plugins siguen funcionando.
+  protect-blocks: true
+  # Altura a partir de la cual se considera que cayó al vacío.
+  void-rescue-y: -10.0
+  # Se configura dentro del juego con /core setlobby.
+  # Si todavía no existe, se usa el spawn normal del mundo indicado arriba.
+  spawn: {}
+
+# Mensajes de la cola central. %game% se reemplaza por el minijuego.
+messages:
+  minigames:
+    disabled: "&cEl minijuego &e%game% &cestá deshabilitado temporalmente."
+    all-disabled: "&cLos minijuegos están deshabilitados temporalmente."
+  queue:
+    joined: "&aTe uniste a la cola de &e%game%&a."
+    joined-game: "&aEntraste a &e%game%&a."
+    left: "&cSaliste de la cola de %game%."
+    already-queued: "&eYa estás en la cola de %game%."
+    other-queue: "&cYa estás en la cola de %game%. Sal primero con /core queue leave."
+    already-playing: "&cYa estás participando en un minijuego."
+    not-available: "&c%game% no está aceptando jugadores ahora."
+    full: "&cLa cola de %game% está llena."
+    join-error: "&cNo se pudo entrar a %game%. Inténtalo nuevamente."
+
+# ================================
+# Integración con Multiverse
+# ================================
+# ArlightCore coordina los grupos; Multiverse-Inventories sigue siendo quien guarda
+# y cambia los perfiles. No se mantienen dos sistemas de inventarios en paralelo.
+integrations:
+  multiverse:
+    enabled: true
+
+    inventories:
+      enabled: true
+      require-plugin: false
+      default-shares: "inventory,experience,health,hunger,potion_effects"
+
+      # Por seguridad NO modifica los grupos estáticos al encender el servidor.
+      # Revisa los nombres y ejecuta /core multiverse sync una vez.
+      # Las arenas dinámicas de Bingo sí se registran automáticamente al prepararse.
+      sync-static-groups-on-startup: false
+
+      # Evita que un mismo mundo quede en dos grupos con shares superpuestos.
+      # Antes de tocar groups.yml, Core crea una copia en:
+      # plugins/ArlightCore/multiverse-backups/
+      remove-from-other-groups: true
+
+      # Grupos estáticos del servidor. Solo se añaden mundos que ya existan.
+      # Ajusta los nombres para que coincidan exactamente con tus carpetas de mundos.
+      groups:
+        survival:
+          worlds:
+            - "legos"
+            - "survival"
+            - "recursos"
+            - "world_nether"
+            - "world_the_end"
+
+        skywars:
+          worlds:
+            - "skywars"
+
+        luckyblockislands:
+          worlds:
+            - "lucky_islands"
+
+        eventos:
+          worlds:
+            - "eventos"
+
+    nether-portals:
+      enabled: true
+      require-plugin: false
+
+
+# Paneles avanzados dibujados por ArlightChatClient.
+# El scoreboard Bukkit continúa activo como respaldo para clientes sin el mod.
+visual-scoreboards:
+  enabled: true
+  cover-vanilla-sidebar: true
+
+
+# Pantalla 3D universal de resultados para todos los minijuegos.
+universal-podium:
+  enabled: true
+  default-display-ticks: 240
+  allow-requeue: true
+  hide-hud: true

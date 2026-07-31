@@ -1,0 +1,10 @@
+PRUEBA DEL BOTÓN DE COSMÉTICOS
+
+1. Instala ArlightCore 1.19.0 y ArlightCosmetics 1.1.0.
+2. Reinicia completamente el servidor.
+3. Entra al mundo legos.
+4. Debe aparecer Armario de Cosméticos en la ranura 6.
+5. Haz clic derecho y confirma que se abre /cosmeticos.
+6. Comprueba que no se pueda soltar ni mover.
+7. Sal de legos y confirma que el botón se retira.
+8. Regresa a legos y confirma que reaparece.
