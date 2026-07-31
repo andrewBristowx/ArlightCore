@@ -1,0 +1,10 @@
+PRUEBAS — ArlightBuildBattle 1.2.1
+
+1. Iniciar una partida con al menos tres jugadores.
+2. Durante la construcción, hacer que el dueño de la parcela 1 salga.
+3. Confirmar que la votación visita las parcelas originales 1, 2 y 3 sin desplazarlas.
+4. Durante la votación de la parcela 2, hacer que un jugador distinto salga.
+5. Confirmar que los votos siguientes continúan asignados a la parcela mostrada.
+6. Comprobar que nadie puede votar por su propia construcción.
+7. Verificar que el podio usa los dueños originales y los promedios correctos.
+8. Reiniciar el servidor durante BUILDING y BUILD_VOTE para comprobar la recuperación de Core.

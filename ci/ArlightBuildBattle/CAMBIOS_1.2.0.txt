@@ -1,0 +1,5 @@
+ArlightBuildBattle 1.2.0 - UNIVERSAL PODIUM
+- Podio 3D individual por puntuación media.
+- Muestra tema, votos recibidos y promedio.
+- Devuelve a legos antes de abrir resultados.
+- Botón Volver a jugar con /bb join.

@@ -1,0 +1,8 @@
+ArlightBuildBattle 1.3.0
+
+- Guarda una instantánea exacta de cada parcela antes de crear la plataforma.
+- Restaura bloques y estados originales al terminar la partida.
+- La restauración ya no depende de que un evento haya registrado cada cambio.
+- Corrige restos de líquidos, fuego, bloques rotos y modificaciones indirectas.
+- Conserva la relación inmutable parcela-propietario introducida en 1.2.1.
+- Mantiene el mundo vacio en el grupo de inventario buildbattle.
