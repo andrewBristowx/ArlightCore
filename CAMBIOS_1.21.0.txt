@@ -1,0 +1,10 @@
+ArlightCore 1.21.0 - ATOMIC SESSIONS + DOCTOR
+
+- sessions.yml se escribe mediante temporal, fsync y reemplazo atómico.
+- Conserva sessions.yml.bak y recupera un temporal o respaldo válido al arrancar.
+- Preserva como sessions.yml.corrupt cualquier archivo dañado reemplazado.
+- Usa una restauración idempotente en dos fases (RESTORING → snapshot → cierre durable).
+- Revierte cambios en memoria si una escritura no puede completarse.
+- Añade sessions.journal con un historial pequeño y rotativo de operaciones.
+- Añade /core doctor para revisar versión, entorno, sesiones, mundos e integraciones.
+- Incluye pruebas automáticas de escritura, respaldo y recuperación atómica.

@@ -1,0 +1,42 @@
+name: Compilar ArlightCore 1.21.0
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - 'agent/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Validar versión
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '<version>1.21.0</version>' pom.xml
+          grep -q "version: '1.21.0'" src/main/resources/plugin.yml
+      - name: Compilar y probar
+        run: mvn -B -U clean verify
+      - name: Reunir JAR
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp target/ArlightCore-1.21.0.jar dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArlightCore-1.21.0-JAR
+          path: dist/ArlightCore-1.21.0.jar
+          if-no-files-found: error
