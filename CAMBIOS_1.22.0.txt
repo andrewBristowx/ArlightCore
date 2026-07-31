@@ -1,0 +1,9 @@
+ArlightCore 1.22.0 - SAFE WORLD TRANSACTIONS
+
+- API común para activar arenas ya preparadas sin borrar primero el mundo estable.
+- Diario atómico por transacción con etapas PREPARING, VALIDATED, BACKED_UP,
+  SWITCHED y COMPLETE.
+- Respaldo persistente del mundo anterior.
+- Recuperación al arrancar y comando /core worldtx recover.
+- /core doctor informa transacciones pendientes y el último error.
+- Rechaza rutas inseguras, enlaces simbólicos, mundos sin level.dat y mundos con jugadores.

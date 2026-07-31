@@ -9,6 +9,7 @@ import com.arlight.core.session.MinigameSessionManager;
 import com.arlight.core.stats.PlayerStatsManager;
 import com.arlight.core.queue.MinigameQueueManager;
 import com.arlight.core.network.VisualScoreboardNetwork;
+import com.arlight.core.world.WorldHandoffResult;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
@@ -301,6 +302,21 @@ public final class ArlightCoreAPI {
         }
         return core.getMultiverseIntegrationManager().configureMinigameWorldsStable(
                 groupName, overworld, nether, end);
+    }
+
+    /**
+     * Activa una carpeta de mundo temporal ya generada y validada, conservando
+     * la carpeta anterior como respaldo recuperable. Debe llamarse en el hilo
+     * principal y después de sacar a todos los jugadores del mundo activo.
+     */
+    public static WorldHandoffResult replaceArenaWorld(String owner, String activeWorld,
+                                                       String preparedWorld) {
+        if (!(plugin instanceof ArlightCorePlugin core) || core.getArenaWorldManager() == null) {
+            return new WorldHandoffResult(false, null,
+                    com.arlight.core.world.WorldTransactionStage.FAILED,
+                    "ArlightCore no está inicializado");
+        }
+        return core.getArenaWorldManager().replace(owner, activeWorld, preparedWorld);
     }
 
 }

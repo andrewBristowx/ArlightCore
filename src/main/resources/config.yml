@@ -156,3 +156,13 @@ universal-podium:
   default-display-ticks: 240
   allow-requeue: true
   hide-hud: true
+
+# Persistencia segura de inventarios y sesiones de minijuegos.
+sessions:
+  journal-max-entries: 200
+
+# Traspaso transaccional de arenas ya generadas. Core conserva el mundo anterior
+# como respaldo y recupera automáticamente diarios interrumpidos al arrancar.
+world-transactions:
+  enabled: true
+  auto-recover-on-startup: true

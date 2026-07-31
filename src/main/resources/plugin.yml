@@ -1,5 +1,5 @@
 name: ArlightCore
-version: '1.20.0'
+version: '1.22.0'
 main: com.arlight.core.ArlightCorePlugin
 api-version: '1.21'
 author: Arlight
@@ -9,7 +9,7 @@ softdepend: [PlaceholderAPI, ArlightChat, Multiverse-Core, Multiverse-Inventorie
 commands:
   core:
     description: Comando principal de ArlightCore
-    usage: /core <items|reward|xp|stats|status|debug|recover|setlobby|lobby|queue|games|minigames|leaderboard|hologram|multiverse|reload>
+    usage: /core <items|reward|xp|stats|status|doctor|worldtx|debug|recover|setlobby|lobby|queue|games|minigames|leaderboard|hologram|multiverse|reload>
     permission: arlightcore.use
 
 permissions:

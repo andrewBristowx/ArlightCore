@@ -21,6 +21,7 @@ import com.arlight.core.lobby.LobbyScoreboardManager;
 import com.arlight.core.integration.MultiverseIntegrationManager;
 import com.arlight.core.network.VisualScoreboardNetwork;
 import com.arlight.core.network.UniversalPodiumNetwork;
+import com.arlight.core.world.ArenaWorldManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,6 +51,7 @@ public class ArlightCorePlugin extends JavaPlugin {
     private MultiverseIntegrationManager multiverseIntegrationManager;
     private VisualScoreboardNetwork visualScoreboardNetwork;
     private UniversalPodiumNetwork universalPodiumNetwork;
+    private ArenaWorldManager arenaWorldManager;
 
     private int xpPerWin;
     private final Map<String, Integer> xpPerMinigame = new HashMap<>();
@@ -87,6 +89,7 @@ public class ArlightCorePlugin extends JavaPlugin {
         this.leaderboardManager = new LeaderboardManager(this);
         this.hologramManager = new HologramManager(this);
         this.lobbyScoreboardManager = new LobbyScoreboardManager(this);
+        this.arenaWorldManager = new ArenaWorldManager(this);
 
         loadCoreConfigValues();
         levelManager.load();
@@ -109,6 +112,14 @@ public class ArlightCorePlugin extends JavaPlugin {
         hologramManager.start();
         lobbyScoreboardManager.start();
         multiverseIntegrationManager.start();
+        if (getConfig().getBoolean("world-transactions.enabled", true)
+                && getConfig().getBoolean("world-transactions.auto-recover-on-startup", true)) {
+            var recovered = arenaWorldManager.recoverInterrupted();
+            if (!recovered.isEmpty()) {
+                getLogger().warning("Se revisaron " + recovered.size()
+                        + " transacciones de mundos interrumpidas.");
+            }
+        }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             boolean registered = new ArlightCoreExpansion(this).register();
@@ -286,6 +297,10 @@ public class ArlightCorePlugin extends JavaPlugin {
 
     public UniversalPodiumNetwork getUniversalPodiumNetwork() {
         return universalPodiumNetwork;
+    }
+
+    public ArenaWorldManager getArenaWorldManager() {
+        return arenaWorldManager;
     }
 
     public int getXpPerWin(String minigameId) {

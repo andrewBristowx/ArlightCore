@@ -32,7 +32,7 @@ public class CoreCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(Arrays.asList("items", "reward", "xp", "stats", "status", "debug", "recover", "setlobby", "lobby", "queue", "games", "minigames", "leaderboard", "hologram", "multiverse", "reload"), args[0]);
+            return filter(Arrays.asList("items", "reward", "xp", "stats", "status", "doctor", "worldtx", "debug", "recover", "setlobby", "lobby", "queue", "games", "minigames", "leaderboard", "hologram", "multiverse", "reload"), args[0]);
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("queue")) {
             return filter(Arrays.asList("leave", "status"), args[1]);
@@ -49,6 +49,9 @@ public class CoreCommand implements CommandExecutor, TabCompleter {
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("multiverse")) {
             return filter(Arrays.asList("status", "sync"), args[1]);
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("worldtx")) {
+            return filter(List.of("list", "recover"), args[1]);
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("reward")) {
             return filter(Arrays.asList("set", "remove", "list"), args[1]);
@@ -100,7 +103,7 @@ public class CoreCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.YELLOW + "Uso: /core <items|reward|xp|stats|status|debug|recover|setlobby|lobby|queue|games|minigames|leaderboard|hologram|reload>");
+            sender.sendMessage(ChatColor.YELLOW + "Uso: /core <items|reward|xp|stats|status|doctor|worldtx|debug|recover|setlobby|lobby|queue|games|minigames|leaderboard|hologram|reload>");
             return true;
         }
 
@@ -278,6 +281,77 @@ public class CoreCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage(ChatColor.YELLOW + "Deshabilitados individualmente: "
                             + ChatColor.WHITE + plugin.getDisabledMinigames());
                 }
+                return true;
+            }
+
+            case "doctor": {
+                if (!checkAdmin(sender)) return true;
+                var health = plugin.getSessionManager().storageHealth();
+                sender.sendMessage(ChatColor.GOLD + "ArlightCore Doctor "
+                        + ChatColor.WHITE + "v" + plugin.getDescription().getVersion());
+                sender.sendMessage(ChatColor.YELLOW + "Entorno: " + ChatColor.WHITE
+                        + "Java " + System.getProperty("java.version") + " | "
+                        + Bukkit.getBukkitVersion());
+                sender.sendMessage(ChatColor.YELLOW + "Sesiones: " + ChatColor.WHITE
+                        + plugin.getSessionManager().size() + ChatColor.GRAY
+                        + " | pendientes=" + plugin.getSessionManager().pendingCount()
+                        + " | restaurando=" + plugin.getSessionManager().restoringCount());
+                sender.sendMessage(ChatColor.YELLOW + "Persistencia: "
+                        + (health.healthy() ? ChatColor.GREEN + "SALUDABLE" : ChatColor.RED + "REVISAR")
+                        + ChatColor.GRAY + " | último=" + health.lastEvent());
+                sender.sendMessage(ChatColor.YELLOW + "Archivos: " + ChatColor.WHITE
+                        + "actual=" + health.currentFile()
+                        + " temp=" + health.temporaryFile()
+                        + " backup=" + health.backupFile()
+                        + " journal=" + health.journalFile());
+                if (health.error() != null && !health.error().isBlank()) {
+                    sender.sendMessage(ChatColor.RED + "Error de persistencia: " + health.error());
+                }
+                sender.sendMessage(ChatColor.YELLOW + "Mundos cargados: " + ChatColor.WHITE
+                        + Bukkit.getWorlds().size() + ChatColor.GRAY + " | lobby="
+                        + (Bukkit.getWorld(plugin.getLobbyWorld()) == null
+                        ? ChatColor.RED + "NO CARGADO" : ChatColor.GREEN + "OK"));
+                sender.sendMessage(ChatColor.YELLOW + "Minijuegos registrados: " + ChatColor.WHITE
+                        + plugin.getMinigameRegistry().getAll().size());
+                sender.sendMessage(ChatColor.YELLOW + "Integraciones: " + ChatColor.WHITE
+                        + "PAPI=" + pluginEnabled("PlaceholderAPI")
+                        + " MV=" + pluginEnabled("Multiverse-Core")
+                        + " MVI=" + pluginEnabled("Multiverse-Inventories")
+                        + " MVNP=" + pluginEnabled("Multiverse-NetherPortals"));
+                sender.sendMessage(ChatColor.YELLOW + "Transacciones de mundos: " + ChatColor.WHITE
+                        + plugin.getArenaWorldManager().transactions().size() + ChatColor.GRAY
+                        + " | pendientes=" + plugin.getArenaWorldManager().pendingCount());
+                if (plugin.getArenaWorldManager().lastError() != null
+                        && !plugin.getArenaWorldManager().lastError().isBlank()) {
+                    sender.sendMessage(ChatColor.RED + "Último error de mundos: "
+                            + plugin.getArenaWorldManager().lastError());
+                }
+                return true;
+            }
+
+            case "worldtx": {
+                if (!checkAdmin(sender)) return true;
+                if (args.length >= 2 && args[1].equalsIgnoreCase("recover")) {
+                    var recovered = plugin.getArenaWorldManager().recoverInterrupted();
+                    sender.sendMessage(ChatColor.GREEN + "Recuperación revisada: " + recovered.size()
+                            + " transacción(es).");
+                    for (var result : recovered) {
+                        sender.sendMessage((result.success() ? ChatColor.GREEN : ChatColor.RED)
+                                + String.valueOf(result.transactionId()) + " " + result.stage()
+                                + ChatColor.GRAY + " - " + result.message());
+                    }
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GOLD + "Transacciones de mundos");
+                var transactions = plugin.getArenaWorldManager().transactions();
+                if (transactions.isEmpty()) sender.sendMessage(ChatColor.GRAY + "No hay transacciones registradas.");
+                for (var tx : transactions) {
+                    sender.sendMessage(ChatColor.GRAY + tx.id().toString() + " " + ChatColor.YELLOW
+                            + tx.owner() + ChatColor.WHITE + " " + tx.activeWorld() + " <- "
+                            + tx.preparedWorld() + ChatColor.GRAY + " [" + tx.stage() + "]");
+                    if (!tx.error().isBlank()) sender.sendMessage(ChatColor.RED + "  " + tx.error());
+                }
+                sender.sendMessage(ChatColor.YELLOW + "Usa /core worldtx recover para reanudar pendientes.");
                 return true;
             }
 
@@ -626,6 +700,10 @@ public class CoreCommand implements CommandExecutor, TabCompleter {
 
     private String icon(String icon) {
         return plugin.getConfig().getBoolean("decorations.enabled", true) ? icon : "";
+    }
+
+    private String pluginEnabled(String name) {
+        return Bukkit.getPluginManager().isPluginEnabled(name) ? "OK" : "OFF";
     }
 
     private String joinArgs(String[] args, int start) {

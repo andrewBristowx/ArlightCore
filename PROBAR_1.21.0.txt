@@ -1,0 +1,11 @@
+PRUEBAS — ArlightCore 1.21.0
+
+1. Arrancar sin sessions.yml y ejecutar /core doctor.
+2. Entrar a un minijuego y confirmar sessions.yml, sessions.yml.bak y sessions.journal.
+3. Reiniciar durante la partida y comprobar que la sesión aparece pendiente.
+4. Reconectar: el snapshot debe restaurarse una sola vez y la sesión debe desaparecer.
+5. Corromper una copia de prueba de sessions.yml con el servidor apagado y conservar .bak.
+6. Arrancar y confirmar BACKUP_RESTORED en /core doctor y sessions.yml.corrupt preservado.
+7. Dejar un sessions.yml.tmp válido con el actual inválido y confirmar TEMP_PROMOTED.
+8. Probar /core recover sobre un jugador sin recuperación: no debe tocar el inventario.
+9. Repetir con Multiverse-Inventories activo para confirmar external-inventory=true.
