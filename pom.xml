@@ -6,7 +6,7 @@
 
     <groupId>com.arlight</groupId>
     <artifactId>ArlightCore</artifactId>
-    <version>1.20.0</version>
+    <version>1.21.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -49,6 +49,12 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>9.3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -78,6 +84,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>3.1.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
             </plugin>
         </plugins>
     </build>
