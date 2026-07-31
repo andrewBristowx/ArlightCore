@@ -13,6 +13,11 @@ public interface MinigameProvider {
     /** Id unico y estable (ej. "bingo", "skywars"). Se usa como clave interna. */
     String getId();
 
+    /** Categoría única (por ejemplo bingo o skywars). Por defecto usa el mismo ID. */
+    default String getCategory() {
+        return getId();
+    }
+
     /** Nombre mostrado en el selector (puede tener colores de ChatColor). */
     String getDisplayName();
 
@@ -24,4 +29,36 @@ public interface MinigameProvider {
 
     /** Se llama cuando un jugador hace click para unirse desde el selector. */
     void join(Player player);
+
+    /** Salida opcional; se mantiene default para no romper minijuegos existentes. */
+    default void leave(Player player) {
+    }
+
+    /**
+     * Se llama cuando un jugador se desconecta con una sesión activa. El minijuego
+     * debe quitarlo de la partida, pero NO debe cerrar la sesión del Core: el Core
+     * la conserva para restaurar inventario y ubicación al próximo ingreso.
+     */
+    default void handleDisconnect(Player player) {
+    }
+
+    /**
+     * Se ejecuta después de restaurar una sesión interrumpida. Permite que cada
+     * minijuego elimine objetos temporales que pudieran existir en respaldos antiguos.
+     */
+    default void cleanupAfterRecovery(Player player) {
+    }
+
+    /** Permite al Core consultar si el jugador sigue dentro del minijuego. */
+    default boolean isPlaying(Player player) {
+        return false;
+    }
+
+    default int getCurrentPlayers() {
+        return 0;
+    }
+
+    default int getMaxPlayers() {
+        return 0;
+    }
 }

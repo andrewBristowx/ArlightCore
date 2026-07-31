@@ -1,5 +1,6 @@
 package com.arlight.core.xp;
 
+import com.arlight.core.database.DatabaseManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,14 +21,16 @@ public class PlayerLevelManager {
 
     private final JavaPlugin plugin;
     private final File file;
+    private final DatabaseManager database;
 
     private int xpPerLevel = 30;
 
     private final Map<UUID, Integer> xpByPlayer = new HashMap<>();
     private final Map<UUID, Set<Integer>> claimedLevelsByPlayer = new HashMap<>();
 
-    public PlayerLevelManager(JavaPlugin plugin) {
+    public PlayerLevelManager(JavaPlugin plugin, DatabaseManager database) {
         this.plugin = plugin;
+        this.database = database;
         this.file = new File(plugin.getDataFolder(), "playerdata.yml");
     }
 
@@ -52,8 +55,15 @@ public class PlayerLevelManager {
         return xpPerLevel;
     }
 
+    public Map<UUID, Integer> getAllXp() {
+        return Map.copyOf(xpByPlayer);
+    }
+
     public void addXp(UUID uuid, int amount) {
-        xpByPlayer.merge(uuid, amount, Integer::sum);
+        if (uuid == null || amount <= 0) return;
+        int current = Math.max(0, xpByPlayer.getOrDefault(uuid, 0));
+        long result = (long) current + amount;
+        xpByPlayer.put(uuid, result > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) result);
         save();
     }
 
@@ -67,9 +77,28 @@ public class PlayerLevelManager {
         save();
     }
 
+    public int countUnclaimedRewards(UUID uuid, java.util.Set<Integer> rewardLevels) {
+        int currentLevel = getLevel(uuid);
+        int count = 0;
+        for (int level : rewardLevels) {
+            if (level <= currentLevel && !isClaimed(uuid, level)) count++;
+        }
+        return count;
+    }
+
     public void load() {
         xpByPlayer.clear();
         claimedLevelsByPlayer.clear();
+        if (database != null && database.isEnabled()) {
+            Map<UUID, DatabaseManager.LevelData> stored = database.loadLevels();
+            if (!stored.isEmpty()) {
+                stored.forEach((uuid, data) -> {
+                    xpByPlayer.put(uuid, data.xp());
+                    claimedLevelsByPlayer.put(uuid, new HashSet<>(data.claimedLevels()));
+                });
+                return;
+            }
+        }
         if (!file.exists()) return;
 
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
@@ -79,13 +108,17 @@ public class PlayerLevelManager {
         for (String key : playersSection.getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(key);
-                int xp = playersSection.getInt(key + ".xp", 0);
+                int xp = Math.max(0, playersSection.getInt(key + ".xp", 0));
                 List<Integer> claimed = playersSection.getIntegerList(key + ".claimed-levels");
                 xpByPlayer.put(uuid, xp);
                 claimedLevelsByPlayer.put(uuid, new HashSet<>(claimed));
             } catch (IllegalArgumentException ignored) {
                 // uuid corrupto, se ignora esa entrada
             }
+        }
+        if (database != null && database.isEnabled()) {
+            database.saveLevels(xpByPlayer, claimedLevelsByPlayer);
+            plugin.getLogger().info("Datos de niveles YAML enviados a MySQL.");
         }
     }
 
@@ -101,6 +134,9 @@ public class PlayerLevelManager {
             yaml.save(file);
         } catch (IOException e) {
             plugin.getLogger().log(Level.WARNING, "No se pudo guardar playerdata.yml", e);
+        }
+        if (database != null && database.isEnabled()) {
+            database.saveLevels(xpByPlayer, claimedLevelsByPlayer);
         }
     }
 }

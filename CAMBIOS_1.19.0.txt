@@ -1,0 +1,10 @@
+ArlightCore 1.19.0 - COSMETICS LOBBY BUTTON
+
+- Añade un cuarto botón permanente en la barra rápida del mundo legos.
+- El botón Armario de Cosméticos usa por defecto un fragmento de amatista brillante.
+- Se coloca en la ranura 6 sin reemplazar Minijuegos, Recompensas o Perfil.
+- Al hacer clic derecho ejecuta /cosmeticos y abre ArlightCosmetics 1.1.0.
+- Solo aparece si ArlightCosmetics está instalado y habilitado.
+- Se elimina automáticamente al abandonar legos o entrar a una sesión.
+- No puede soltarse, moverse, intercambiarse a la mano secundaria ni guardarse.
+- Material, ranura y activación se controlan desde lobby-items.cosmetics.

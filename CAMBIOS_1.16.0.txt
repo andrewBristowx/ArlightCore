@@ -1,0 +1,6 @@
+ARLIGHTCORE 1.16.0
+
+- Nuevo canal arlightcore:visual_scoreboard.
+- API genérica para paneles visuales dinámicos de Lobby, Bingo y SkyWars.
+- El lobby envía nivel, victorias, partidas y progreso del pase en tiempo real.
+- Se conserva el scoreboard Bukkit como respaldo.

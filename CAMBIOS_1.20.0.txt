@@ -1,0 +1,11 @@
+ArlightCore 1.20.0 — SAFE-MINIGAME-WORLD-HANDOFF
+
+- Nueva API asíncrona configureMinigameWorldsStable para preparar tríos de mundos sin duplicar comandos.
+- Las llamadas simultáneas para el mismo grupo comparten una sola operación.
+- Multiverse-Core ya no recibe /mv import repetido cuando el mundo está cargado o ya figura en worlds.yml.
+- Compatibilidad con worlds.yml de Multiverse 4/5 tanto bajo la sección worlds: como en la raíz.
+- Caché de mundos conocidos y enfriamiento de 30 segundos para importaciones y enlaces.
+- Multiverse-Inventories compara el contenido real del grupo antes de ejecutar add-worlds/add-shares.
+- El flujo queda escalonado: registro de mundos, espera, grupo de inventarios, espera y portales.
+- Las excepciones de cada etapa se contienen y se informan mediante CompletableFuture sin bloquear el tick principal.
+- Conserva el botón de cosméticos, podio universal, scoreboards y todas las integraciones anteriores.

@@ -36,7 +36,7 @@ public class RewardsGUI {
         ItemStack info = new ItemStack(Material.EXPERIENCE_BOTTLE);
         ItemMeta infoMeta = info.getItemMeta();
         if (infoMeta != null) {
-            infoMeta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Nivel " + level);
+            infoMeta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Nivel del minipase " + level);
             infoMeta.setLore(List.of(
                     ChatColor.GRAY + "XP total: " + ChatColor.WHITE + xp,
                     ChatColor.GRAY + "Progreso al siguiente nivel: " + ChatColor.WHITE + xpIntoLevel + "/" + xpPerLevel
