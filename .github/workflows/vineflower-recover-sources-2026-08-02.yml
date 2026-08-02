@@ -1,0 +1,70 @@
+name: Recuperar fuentes con Vineflower 2026-08-02
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - agent/recover-missing-sources-base-2026-08-02
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    if: github.head_ref == 'agent/recover-missing-sources-2026-08-02'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Preparar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Descargar herramientas y JAR originales
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet gdown
+          mvn -q dependency:get -Dartifact=org.vineflower:vineflower:1.11.1
+          VF="$HOME/.m2/repository/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar"
+          test -s "$VF"
+          mkdir -p input
+          gdown 1XudjAHy-8we6IItGDs9MDcYpkPVCPdKG -O input/ArlightCosmetics-1.17.0.jar
+          gdown 1CMiVrZg0PuUXPio1NlXD2JJRyX_GEq39 -O input/ArlightCosmeticsCurios-1.17.2.jar
+          gdown 1In-Me0XbAk5-AXiuqaoVChV-RfqoIRsc -O input/ArlightChatClient-5.3.0.jar
+          echo '31a17d4041dd7e33d7b7a09996cbba4f1128066c67dcb6669265efb7174100fe  input/ArlightCosmetics-1.17.0.jar' | sha256sum -c -
+          echo 'adfc5e4ed929a2a1a8714b1eca59df54db372dc23e25b0226cb6a142fec0bead  input/ArlightCosmeticsCurios-1.17.2.jar' | sha256sum -c -
+          echo '3a3bc250bfde2096da506d496aa2f6a715151dc8e92dca8aee591d208f44db7f  input/ArlightChatClient-5.3.0.jar' | sha256sum -c -
+
+      - name: Decompilar con Vineflower
+        shell: bash
+        run: |
+          set -euo pipefail
+          VF="$HOME/.m2/repository/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar"
+          mkdir -p output archives
+          for jar in input/*.jar; do
+            base=$(basename "$jar" .jar)
+            mkdir -p "archives/$base" "output/$base"
+            java -jar "$VF" -dgs=1 -rsy=1 -lit=1 "$jar" "archives/$base"
+            generated=$(find "archives/$base" -maxdepth 1 -type f -name '*.jar' | head -n 1)
+            test -n "$generated"
+            unzip -q "$generated" -d "output/$base"
+          done
+          find output -type f -name '*.java' | sort > output/JAVA-FILES.txt
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > output/SHA256.txt
+
+      - name: Empaquetar fuentes Vineflower
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -qr Arlight-Fuentes-Vineflower-2026-08-02.zip output
+          unzip -t Arlight-Fuentes-Vineflower-2026-08-02.zip
+
+      - name: Subir fuentes Vineflower
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arlight-Fuentes-Vineflower-2026-08-02
+          path: Arlight-Fuentes-Vineflower-2026-08-02.zip
+          if-no-files-found: error
+          retention-days: 30
