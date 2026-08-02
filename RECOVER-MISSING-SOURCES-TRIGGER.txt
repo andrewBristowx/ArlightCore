@@ -1,2 +1,2 @@
 Recuperar fuentes de ArlightCosmetics 1.17.0, ArlightCosmeticsCurios 1.17.2 y ArlightChatClient 5.3.0.
-Compilación de validación Vineflower activada.
+Compilación final de fuentes corregidas activada.
