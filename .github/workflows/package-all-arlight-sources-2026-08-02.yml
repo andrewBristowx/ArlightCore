@@ -1,0 +1,216 @@
+name: Empaquetar todas las fuentes Arlight 2026-08-02
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - agent/all-projects-source-bundle-base-2026-08-02
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    if: github.head_ref == 'agent/all-projects-source-bundle-2026-08-02'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Descargar rama de activación
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          path: controller
+
+      - name: Descargar ArlightCore 1.22.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightCore
+          ref: agent/core-1.22.0-safe-world-transactions
+          path: bundle/01-FUENTES/ArlightCore-1.22.0
+
+      - name: Descargar ArlightBingo 1.48.15
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightBingo
+          ref: candidate/bingo-1.48.15-critical-routes-soft-secondary-audit
+          path: bundle/01-FUENTES/ArlightBingo-1.48.15
+
+      - name: Descargar ArlightBosses 1.21.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightBosses
+          ref: import/1.21.0
+          path: bundle/01-FUENTES/ArlightBosses-1.21.0
+
+      - name: Descargar ArlightChat 1.6.2
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightChat
+          ref: import/1.6.2
+          path: bundle/01-FUENTES/ArlightChat-1.6.2
+
+      - name: Descargar ArlightChatClient 5.0.1
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightChatClient
+          ref: fix/podium-emotes-5.0.1
+          path: bundle/01-FUENTES/ArlightChatClient-5.0.1
+
+      - name: Descargar ArlightCosmetics 1.14.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightCosmetics
+          ref: import/1.14.0
+          path: bundle/01-FUENTES/ArlightCosmetics-1.14.0
+
+      - name: Descargar ArlightCosmeticsCurios 1.14.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightCosmeticsCurios
+          ref: agent/cosmeticscurios-1.14.0-real-pets
+          path: bundle/01-FUENTES/ArlightCosmeticsCurios-1.14.0
+
+      - name: Descargar ArlightSkyWars 1.8.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightSkyWars
+          ref: agent/skywars-1.8.0-safe-world-handoff
+          path: bundle/01-FUENTES/ArlightSkyWars-1.8.0
+
+      - name: Descargar ArlightLuckyBlock 1.2.2
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightLuckyBlock
+          ref: import/1.2.2
+          path: bundle/01-FUENTES/ArlightLuckyBlock-1.2.2
+
+      - name: Descargar ArlightLuckyBlockIslands 1.4.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightLuckyBlockIslands
+          ref: agent/lucky-islands-1.4.0-safe-world-handoff
+          path: bundle/01-FUENTES/ArlightLuckyBlockIslands-1.4.0
+
+      - name: Descargar ArlightPermissions 1.0.4
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightPermissions
+          ref: agent/permissions-1.0.4-safe-admin-policy
+          path: bundle/01-FUENTES/ArlightPermissions-1.0.4
+
+      - name: Descargar ArlightEventGuard 1.0.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightEventGuard
+          ref: agent/eventguard-1.0.0-world-policies
+          path: bundle/01-FUENTES/ArlightEventGuard-1.0.0
+
+      - name: Descargar Pony0n Resource Pack 2.0.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/Pony0nResourcePack
+          ref: import/2.0.0
+          path: bundle/02-RESOURCE-PACK/Pony0nResourcePack-2.0.0
+
+      - name: Descargar fuente temporal de BuildBattle 1.3.0
+        uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightCore
+          ref: agent/buildbattle-1.3.0-snapshot-ci
+          path: temp-buildbattle
+
+      - name: Extraer ArlightBuildBattle 1.3.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a temp-buildbattle/ci/ArlightBuildBattle bundle/01-FUENTES/ArlightBuildBattle-1.3.0
+          rm -rf temp-buildbattle
+
+      - name: Descargar ArlightWeaponSkins 1.8.0 compilable
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet gdown
+          gdown 1h0MRxZFxvBjL7wNVPZfXoCJAUNinEKho -O /tmp/ArlightWeaponSkins-1.8.0-SOURCE.zip
+          echo '8da3c659d85b110b03e81d8869db86bbb43f57dda1d5adfca026548b33af5daa  /tmp/ArlightWeaponSkins-1.8.0-SOURCE.zip' | sha256sum -c -
+          unzip -q /tmp/ArlightWeaponSkins-1.8.0-SOURCE.zip -d /tmp/weaponskins
+          mv /tmp/weaponskins/ArlightWeaponSkins-1.8.0-SOURCE bundle/01-FUENTES/ArlightWeaponSkins-1.8.0
+
+      - name: Registrar commits y limpiar metadatos
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p bundle/03-ESTADO-Y-GUIAS
+          {
+            echo '# Fuentes obtenidas desde GitHub'
+            echo
+            for project in bundle/01-FUENTES/* bundle/02-RESOURCE-PACK/*; do
+              [ -d "$project/.git" ] || continue
+              printf -- '- `%s`: `%s`\n' "$(basename "$project")" "$(git -C "$project" rev-parse HEAD)"
+            done
+          } > bundle/03-ESTADO-Y-GUIAS/COMMITS-GITHUB.md
+          find bundle -type d -name .git -prune -exec rm -rf {} +
+          find bundle -type d \( -name target -o -name build -o -name .gradle -o -name logs \) -prune -exec rm -rf {} +
+
+      - name: Crear manifiesto preliminar
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > bundle/MANIFIESTO.md <<'EOF'
+          # Fuentes Arlight para compilar
+
+          Preparado el 2 de agosto de 2026 para Minecraft/Arclight 1.21.1 y Java 21.
+
+          ## Fuentes incluidas desde GitHub o Drive
+
+          - ArlightCore 1.22.0 — candidata, rama `agent/core-1.22.0-safe-world-transactions`.
+          - ArlightBingo 1.48.15 — candidata, rama `candidate/bingo-1.48.15-critical-routes-soft-secondary-audit`.
+          - ArlightBosses 1.21.0 — fuente importada.
+          - ArlightChat 1.6.2 — fuente importada.
+          - ArlightChatClient 5.0.1 — fuente más reciente disponible; existe JAR 5.3.0 sin fuente entregada.
+          - ArlightCosmetics 1.14.0 — fuente más reciente disponible; existe JAR 1.17.0 sin fuente entregada.
+          - ArlightCosmeticsCurios 1.14.0 — fuente más reciente disponible; existen JAR 1.17.0/1.17.2 sin fuente entregada.
+          - ArlightWeaponSkins 1.8.0 — fuente compilable con dependencias exactas en `libs/`.
+          - ArlightSkyWars 1.8.0 — candidata.
+          - ArlightLuckyBlock 1.2.2 — fuente recuperada/importada.
+          - ArlightLuckyBlockIslands 1.4.0 — candidata.
+          - ArlightPermissions 1.0.4 — candidata.
+          - ArlightEventGuard 1.0.0 — candidata.
+          - ArlightBuildBattle 1.3.0 — fuente recuperada desde el entorno temporal de Core.
+          - Pony0nResourcePack 2.0.0 — no se compila; se comprime como resource pack.
+
+          ArlightTNTRun 1.3.0 y ArlightParkour 1.2.0 serán añadidos a la entrega final después de descargar este artefacto.
+
+          ## Sin fuente utilizable
+
+          - ArlightAssets: repositorio vacío.
+          - CreatePonyon: no existe una fuente completa auditable.
+          EOF
+
+          cat > bundle/COMPILAR.md <<'EOF'
+          # Compilación
+
+          Usa Java 21.
+
+          - Proyectos Maven: abre la carpeta que contiene `pom.xml` y ejecuta `mvn clean package`.
+          - Proyectos Gradle/NeoForge: abre la carpeta que contiene `gradlew` y ejecuta `./gradlew clean build` en Linux/macOS o `gradlew.bat clean build` en Windows.
+          - ArlightWeaponSkins incluye en `libs/` las dependencias Arlight exactas usadas para compilar; también requiere acceso a los repositorios Maven de NeoForge, GeckoLib y Curios.
+          - Pony0nResourcePack no requiere compilación: comprime su contenido dejando `pack.mcmeta` en la raíz.
+          EOF
+
+      - name: Empaquetar fuentes GitHub
+        shell: bash
+        run: |
+          set -euo pipefail
+          find bundle -type f -print0 | sort -z | xargs -0 sha256sum > bundle/03-ESTADO-Y-GUIAS/SHA256-FUENTES-GITHUB.txt
+          mv bundle Arlight-Proyectos-Fuentes-GitHub-2026-08-02
+          zip -qr Arlight-Proyectos-Fuentes-GitHub-2026-08-02.zip Arlight-Proyectos-Fuentes-GitHub-2026-08-02
+          unzip -t Arlight-Proyectos-Fuentes-GitHub-2026-08-02.zip
+
+      - name: Subir paquete de fuentes
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arlight-Proyectos-Fuentes-GitHub-2026-08-02
+          path: Arlight-Proyectos-Fuentes-GitHub-2026-08-02.zip
+          if-no-files-found: error
+          retention-days: 90
