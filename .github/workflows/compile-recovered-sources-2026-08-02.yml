@@ -1,0 +1,79 @@
+name: Compilar fuentes recuperadas Arlight 2026-08-02
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - agent/recover-missing-sources-base-2026-08-02
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    if: github.head_ref == 'agent/recover-missing-sources-2026-08-02'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: ArlightCosmetics-1.17.0-RECOVERED-SOURCE
+            build: maven
+          - project: ArlightCosmeticsCurios-1.17.2-RECOVERED-SOURCE
+            build: gradle
+          - project: ArlightChatClient-5.3.0-RECOVERED-SOURCE
+            build: gradle
+    steps:
+      - name: Preparar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Descargar fuentes recuperadas
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet gdown
+          gdown 1Ey_YPuyGvvKyWJyf2__0YNnTvZd_qFXX -O /tmp/recovered.zip
+          echo 'c4a00a8c95e7ae561778d308f92247b37a487a1a290592e59d0fc73e74306086  /tmp/recovered.zip' | sha256sum -c -
+          unzip -q /tmp/recovered.zip -d /tmp/recovered
+          test -d "/tmp/recovered/Arlight-Fuentes-Recuperadas-Cosmeticos-2026-08-02/${{ matrix.project }}"
+
+      - name: Compilar Maven
+        if: matrix.build == 'maven'
+        shell: bash
+        working-directory: /tmp/recovered/Arlight-Fuentes-Recuperadas-Cosmeticos-2026-08-02/${{ matrix.project }}
+        run: mvn -B -U -DskipTests clean package
+
+      - name: Compilar Gradle
+        if: matrix.build == 'gradle'
+        shell: bash
+        working-directory: /tmp/recovered/Arlight-Fuentes-Recuperadas-Cosmeticos-2026-08-02/${{ matrix.project }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon clean build
+
+      - name: Recopilar resultado
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROJECT="/tmp/recovered/Arlight-Fuentes-Recuperadas-Cosmeticos-2026-08-02/${{ matrix.project }}"
+          mkdir -p result
+          if [ '${{ matrix.build }}' = 'maven' ]; then
+            cp "$PROJECT"/target/*.jar result/
+          else
+            cp "$PROJECT"/build/libs/*.jar result/
+          fi
+          sha256sum result/* > result/SHA256.txt
+
+      - name: Subir JAR compilado
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.project }}-BUILD
+          path: result/
+          if-no-files-found: error
+          retention-days: 30
