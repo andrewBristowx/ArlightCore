@@ -1,0 +1,111 @@
+name: Recuperar fuentes faltantes Arlight 2026-08-02
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - agent/recover-missing-sources-base-2026-08-02
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    if: github.head_ref == 'agent/recover-missing-sources-2026-08-02'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Descargar activador
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Preparar herramientas
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet gdown
+          curl -L --fail --retry 3 \
+            https://repo1.maven.org/maven2/org/benf/cfr/0.152/cfr-0.152.jar \
+            -o /tmp/cfr.jar
+          echo 'f3c9409f31840202a29d99c2ec725d276f74ab4e6f644a8744a214e31c0ed94b  /tmp/cfr.jar' | sha256sum -c - || true
+
+      - name: Descargar JAR originales
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p input
+          gdown 1XudjAHy-8we6IItGDs9MDcYpkPVCPdKG -O input/ArlightCosmetics-1.17.0.jar
+          gdown 1CMiVrZg0PuUXPio1NlXD2JJRyX_GEq39 -O input/ArlightCosmeticsCurios-1.17.2.jar
+          gdown 1In-Me0XbAk5-AXiuqaoVChV-RfqoIRsc -O input/ArlightChatClient-5.3.0.jar
+          echo '31a17d4041dd7e33d7b7a09996cbba4f1128066c67dcb6669265efb7174100fe  input/ArlightCosmetics-1.17.0.jar' | sha256sum -c -
+          echo 'adfc5e4ed929a2a1a8714b1eca59df54db372dc23e25b0226cb6a142fec0bead  input/ArlightCosmeticsCurios-1.17.2.jar' | sha256sum -c -
+          echo '3a3bc250bfde2096da506d496aa2f6a715151dc8e92dca8aee591d208f44db7f  input/ArlightChatClient-5.3.0.jar' | sha256sum -c -
+
+      - name: Decompilar clases
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p recovered/raw
+          java -jar /tmp/cfr.jar input/ArlightCosmetics-1.17.0.jar \
+            --outputdir recovered/raw/ArlightCosmetics-1.17.0 \
+            --silent true --caseinsensitivefs true
+          java -jar /tmp/cfr.jar input/ArlightCosmeticsCurios-1.17.2.jar \
+            --outputdir recovered/raw/ArlightCosmeticsCurios-1.17.2 \
+            --silent true --caseinsensitivefs true
+          java -jar /tmp/cfr.jar input/ArlightChatClient-5.3.0.jar \
+            --outputdir recovered/raw/ArlightChatClient-5.3.0 \
+            --silent true --caseinsensitivefs true
+
+      - name: Extraer recursos y bytecode de referencia
+        shell: bash
+        run: |
+          set -euo pipefail
+          for spec in \
+            'ArlightCosmetics-1.17.0' \
+            'ArlightCosmeticsCurios-1.17.2' \
+            'ArlightChatClient-5.3.0'; do
+            mkdir -p recovered/resources/$spec recovered/javap/$spec
+            unzip -q input/$spec.jar -d /tmp/$spec
+            find /tmp/$spec -type f ! -name '*.class' -exec cp --parents '{}' recovered/resources/$spec/ \;
+            while IFS= read -r classfile; do
+              name=${classfile#/tmp/$spec/}
+              name=${name%.class}
+              name=${name//\//.}
+              out="recovered/javap/$spec/${name}.txt"
+              mkdir -p "$(dirname "$out")"
+              javap -classpath input/$spec.jar -p -c -s -constants "$name" > "$out"
+            done < <(find /tmp/$spec -type f -name '*.class' | sort)
+          done
+
+      - name: Crear inventario
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo '# Recuperación binaria Arlight'
+            echo
+            echo '- CFR 0.152'
+            echo '- Java 21'
+            echo '- JAR verificados por SHA-256 antes de decompilar'
+            echo
+            for d in recovered/raw/*; do
+              echo "- $(basename "$d"): $(find "$d" -type f -name '*.java' | wc -l) archivos Java"
+            done
+          } > recovered/INVENTARIO.md
+          find recovered -type f -print0 | sort -z | xargs -0 sha256sum > recovered/SHA256.txt
+
+      - name: Empaquetar recuperación cruda
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -qr Arlight-Fuentes-Decompiladas-2026-08-02.zip recovered
+          unzip -t Arlight-Fuentes-Decompiladas-2026-08-02.zip
+
+      - name: Subir recuperación
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arlight-Fuentes-Decompiladas-2026-08-02
+          path: Arlight-Fuentes-Decompiladas-2026-08-02.zip
+          if-no-files-found: error
+          retention-days: 30
