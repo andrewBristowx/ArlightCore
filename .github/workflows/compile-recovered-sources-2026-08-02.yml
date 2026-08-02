@@ -37,7 +37,7 @@ jobs:
           set -euo pipefail
           python3 -m pip install --quiet gdown
           gdown 1Ey_YPuyGvvKyWJyf2__0YNnTvZd_qFXX -O /tmp/recovered.zip
-          echo 'e9d08b32cda923a8fd64b57f0b6c6234a97088241418e12bd2405997f322668d  /tmp/recovered.zip' | sha256sum -c -
+          echo '8cceb1e3e4146097acdc99a52402262e4a1cbf243c602a6ff8ea67ccc96daa24  /tmp/recovered.zip' | sha256sum -c -
           unzip -q /tmp/recovered.zip -d /tmp/recovered
           test -d "/tmp/recovered/Arlight-Fuentes-Recuperadas-Cosmeticos-2026-08-02/${{ matrix.project }}"
 
