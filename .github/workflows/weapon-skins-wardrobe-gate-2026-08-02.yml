@@ -65,8 +65,8 @@ jobs:
           mkdir -p result
           cp "$ROOT/ArlightCosmeticsCurios-1.17.3-WEAPON-UNEQUIP-FIX/build/libs/ArlightCosmeticsCurios-1.17.3.jar" result/ArlightCosmeticsCurios-1.17.3-WEAPON-UNEQUIP-FIX.jar
           cp "$ROOT/ArlightWeaponSkins-1.9.0-WARDROBE-SELECTION-GATE/build/libs/ArlightWeaponSkins-1.9.0.jar" result/ArlightWeaponSkins-1.9.0-WARDROBE-SELECTION-GATE.jar
-          unzip -p result/ArlightCosmeticsCurios-1.17.3-WEAPON-UNEQUIP-FIX.jar META-INF/neoforge.mods.toml | grep -F 'version="1.17.3"'
-          unzip -p result/ArlightWeaponSkins-1.9.0-WARDROBE-SELECTION-GATE.jar META-INF/neoforge.mods.toml | grep -F 'version="1.9.0"'
+          unzip -p result/ArlightCosmeticsCurios-1.17.3-WEAPON-UNEQUIP-FIX.jar META-INF/neoforge.mods.toml | grep -E 'version[[:space:]]*=[[:space:]]*"1\.17\.3"'
+          unzip -p result/ArlightWeaponSkins-1.9.0-WARDROBE-SELECTION-GATE.jar META-INF/neoforge.mods.toml | grep -E 'version[[:space:]]*=[[:space:]]*"1\.9\.0"'
           sha256sum result/*.jar > result/SHA256.txt
           cp "$ROOT/LEEME.md" result/
 
